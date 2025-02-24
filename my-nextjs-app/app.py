@@ -24,12 +24,8 @@ def generate():
 
     # Prepare the prompt for Gemini AI
     prompt = (
-        f"Create a modern, well-furbished frontend code using html and css that is colorful and interactive, add different colour backgrounds \n"
-        f"and add some fun elements to the webpage. Make sure that the header and footer are present and give a few other pages in the left.\n"
-        f"- Increase Sales\n"
-        f"- Provide Information\n"
-        f"- Build Brand Awareness\n"
-        f"- Offer Customer Support\n\n"
+        f"Create a modern, well-furbished , colorful webpage's frontend code using html and css that is colorful and interactive. With different colour backgrounds and relevant images\n"
+        f"and add some fun elements to the webpage. Make sure that the header and footer are present and give  few other pages in the left.\n"
         f"Idea: {idea}\n"
         f"Details: {details}\n\n"
         f"Use the following photos in appropriate places on the webpage:\n"
