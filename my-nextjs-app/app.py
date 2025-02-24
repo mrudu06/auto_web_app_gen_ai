@@ -24,17 +24,25 @@ def generate():
 
     # Prepare the prompt for Gemini AI
     prompt = (
-        f"Create a modern, well-furbished frontend code using html and css that is colorful and interactive , add different colour bacckgrounds \n"
-        f"and add some fun elements to the webpage . make sure that the header and footer is present and give a few other pages in the left .\n"
+        f"Create a modern, well-furbished frontend code using html and css that is colorful and interactive, add different colour backgrounds \n"
+        f"and add some fun elements to the webpage. Make sure that the header and footer are present and give a few other pages in the left.\n"
         f"- Increase Sales\n"
         f"- Provide Information\n"
         f"- Build Brand Awareness\n"
         f"- Offer Customer Support\n\n"
-        
+        f"Idea: {idea}\n"
+        f"Details: {details}\n\n"
+        f"Use the following photos in appropriate places on the webpage:\n"
     )
+
+    # Add photo URLs to the prompt
+    if photos:
+        for photo_url in photos:
+            prompt += f"- {photo_url}\n"
 
     # Call Gemini AI API
     try:
+        print(prompt)
         response = requests.post(
             f'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={GEMINI_API_KEY}',
             json={

@@ -3,6 +3,7 @@ import Head from 'next/head';
 import styles from '../styles/Home.module.css';
 import IdeaForm from '../components/IdeaForm';
 import PromptBox from '../components/PromptBox';
+import TabbedPane from '../components/TabbedPane';
 
 const Home: React.FC = () => {
   return (
@@ -18,6 +19,7 @@ const Home: React.FC = () => {
       </header>
       <main className={styles.main}>
         <IdeaForm />
+        <TabbedPane />
         <PromptBox />
       </main>
       <footer className={styles.footer}>
