@@ -1,0 +1,25 @@
+{
+  "name": "my-nextjs-app",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "concurrently \"npm run next\" \"npm run flask\"",
+    "next": "next dev",
+    "flask": "python app.py",
+    "build": "next build",
+    "start": "next start"
+  },
+  "dependencies": {
+    "http-proxy-middleware": "^3.0.3",
+    "next": "latest",
+    "react": "latest",
+    "react-dom": "latest"
+  },
+  "devDependencies": {
+    "@types/node": "22.13.5",
+    "@types/react": "latest",
+    "@types/react-dom": "latest",
+    "concurrently": "^7.0.0",
+    "typescript": "latest"
+  }
+}
