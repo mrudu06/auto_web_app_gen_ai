@@ -24,21 +24,19 @@ def generate():
 
     # Prepare the prompt for Gemini AI
     prompt = (
-        f"Create a modern, well-furbished , colorful webpage's frontend code using html and css that is colorful and interactive. With different colour backgrounds and relevant images\n"
-        f"and add some fun elements to the webpage. Make sure that the header and footer are present and give  few other pages in the left.\n"
-        f"Idea: {idea}\n"
-        f"Details: {details}\n\n"
-        f"Use the following photos in appropriate places on the webpage:\n"
+        f"Create a modern, well-furbished frontend code using html and css that is pleasing, aesthetic, interactive, add different color backgrounds\n"
+        f"and add some fun elements to the webpage. Make sure that the header and footer are present and give a few other pages on the left.\n"
+        f"- Increase Sales\n"
+        f"- Provide Information\n"
+        f"- Build Brand Awareness\n"
+        f"- Offer Customer Support\n\n"
+        f"Details:\n"
+        f"{details}\n"
+        f"{idea}\n"
     )
-
-    # Add photo URLs to the prompt
-    if photos:
-        for photo_url in photos:
-            prompt += f"- {photo_url}\n"
 
     # Call Gemini AI API
     try:
-        print(prompt)
         response = requests.post(
             f'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={GEMINI_API_KEY}',
             json={
@@ -79,10 +77,35 @@ def generate():
             with open(temp_file_path, 'w') as temp_file:
                 temp_file.write(html_content)
 
-            return jsonify({'code': html_content, 'download_url': '/download'})
+            return jsonify({'code': html_content, 'edit_url': '/edit', 'download_url': '/download'})
 
     app.logger.error(f"Unexpected response structure: {response_json}")
     return jsonify({'error': 'Unexpected response structure from Gemini API'}), 500
+
+@app.route('/edit', methods=['GET'])
+def edit():
+    temp_file_path = '/tmp/generated_code.html'
+    if not os.path.exists(temp_file_path):
+        return jsonify({'error': 'No generated code available for editing'}), 404
+
+    with open(temp_file_path, 'r') as file:
+        code = file.read()
+
+    return jsonify({'code': code})
+
+@app.route('/save', methods=['POST'])
+def save():
+    data = request.json
+    updated_code = data.get('code')
+
+    if not updated_code:
+        return jsonify({'error': 'No code provided for saving'}), 400
+
+    temp_file_path = '/tmp/generated_code.html'
+    with open(temp_file_path, 'w') as file:
+        file.write(updated_code)
+
+    return jsonify({'message': 'Code updated successfully'})
 
 @app.route('/download', methods=['GET'])
 def download():

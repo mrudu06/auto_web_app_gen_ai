@@ -7,17 +7,25 @@ const IdeaForm: React.FC = () => {
   const [details, setDetails] = useState('');
   const [photos, setPhotos] = useState<FileList | null>(null);
   const [response, setResponse] = useState('');
-
+  const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState<{ idea?: string; details?: string }>({});
+  
   const handleNextStep = () => {
     setStep(step + 1);
   };
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
-    // Handle the idea submission logic here
-    console.log('User idea:', idea);
-    console.log('User details:', details);
-    console.log('User photos:', photos);
+
+    // Validate input fields
+    const newErrors: { idea?: string; details?: string } = {};
+    if (!idea) newErrors.idea = 'Idea is required';
+    if (!details) newErrors.details = 'Details are required';
+    setErrors(newErrors);
+
+    if (Object.keys(newErrors).length > 0) return;
+
+    setLoading(true);
 
     // Prepare photos data
     const photosData = photos ? Array.from(photos).map(photo => URL.createObjectURL(photo)) : [];
@@ -44,6 +52,7 @@ const IdeaForm: React.FC = () => {
       setResponse('Failed to generate code');
     }
 
+    setLoading(false);
     handleNextStep();
   };
 
@@ -53,16 +62,17 @@ const IdeaForm: React.FC = () => {
 
   return (
     <div className={styles.container}>
+      {loading && <div className={styles.spinner}>Loading...</div>}
       {step < 5 && (
         <div className={styles.formContainer}>
           {step === 1 && (
-            <div className={styles.message}>
+            <div className={`${styles.message} ${styles.fadeIn}`}>
               <p>Hello! I'm here to help you develop your web application. Please let me know what you need to develop.</p>
               <button className={styles.button} onClick={handleNextStep}>Next</button>
             </div>
           )}
           {step === 2 && (
-            <div className={styles.message}>
+            <div className={`${styles.message} ${styles.fadeIn}`}>
               <p>Great! Can you provide me with details like your shop name, location, phone, and email?</p>
               <label htmlFor="idea" className={styles.label}>Enter your web application idea:</label>
               <input
@@ -70,27 +80,29 @@ const IdeaForm: React.FC = () => {
                 id="idea"
                 value={idea}
                 onChange={(e) => setIdea(e.target.value)}
+                className={`${styles.input} ${errors.idea ? styles.error : ''}`}
                 required
-                className={styles.input}
               />
+              {errors.idea && <div className={styles.errorMessage}>{errors.idea}</div>}
               <button className={styles.button} onClick={handleNextStep}>Next</button>
             </div>
           )}
           {step === 3 && (
-            <div className={styles.message}>
+            <div className={`${styles.message} ${styles.fadeIn}`}>
               <p>Can you provide more details about your idea?</p>
               <textarea
                 id="details"
                 value={details}
                 onChange={(e) => setDetails(e.target.value)}
+                className={`${styles.textarea} ${errors.details ? styles.error : ''}`}
                 required
-                className={styles.textarea}
               />
+              {errors.details && <div className={styles.errorMessage}>{errors.details}</div>}
               <button className={styles.button} onClick={handleNextStep}>Next</button>
             </div>
           )}
           {step === 4 && (
-            <div className={styles.message}>
+            <div className={`${styles.message} ${styles.fadeIn}`}>
               <p>Please add images with the add button.</p>
               <input
                 type="file"
@@ -99,13 +111,20 @@ const IdeaForm: React.FC = () => {
                 onChange={handlePhotoChange}
                 className={styles.input}
               />
+              {photos && (
+                <div className={styles.imagePreview}>
+                  {Array.from(photos).map((photo, index) => (
+                    <img key={index} src={URL.createObjectURL(photo)} alt="preview" className={styles.previewImage} />
+                  ))}
+                </div>
+              )}
               <button className={styles.button} onClick={handleSubmit}>Generate Web App</button>
             </div>
           )}
         </div>
       )}
       {step === 5 && (
-        <div className={styles.resultContainer}>
+        <div className={`${styles.resultContainer} ${styles.fadeIn}`}>
           <div className={styles.codeContainer}>
             <h2>AI Generated Frontend Code:</h2>
             <pre className={styles.codeBlock}>{response}</pre>
