@@ -1,14 +1,14 @@
-from flask import Flask, request, jsonify, send_file
+from flask import Flask, request, jsonify, send_file, render_template, redirect, url_for
+from flask_cors import CORS
 import requests
 import os
-import zipfile
-from io import BytesIO
 from dotenv import load_dotenv
 
 # Load environment variables from .env file
 load_dotenv()
 
 app = Flask("AI Assistant Rapid Web App Developer")
+CORS(app)  # Enable CORS for all routes
 
 GEMINI_API_KEY = os.getenv('GEMINI_API_KEY')  # Load the API key from the environment variable
 
@@ -107,19 +107,24 @@ def save():
 
     return jsonify({'message': 'Code updated successfully'})
 
+@app.route('/api/generated-code', methods=['GET'])
+def get_generated_code():
+    temp_file_path = '/tmp/generated_code.html'
+    if not os.path.exists(temp_file_path):
+        return jsonify({'error': 'No generated code available for preview'}), 404
+
+    with open(temp_file_path, 'r') as file:
+        html_content = file.read()
+
+    return jsonify({'code': html_content})
+
 @app.route('/download', methods=['GET'])
 def download():
     temp_file_path = '/tmp/generated_code.html'
     if not os.path.exists(temp_file_path):
         return jsonify({'error': 'No generated code available for download'}), 404
 
-    # Create a zip file containing the generated code
-    zip_buffer = BytesIO()
-    with zipfile.ZipFile(zip_buffer, 'w') as zip_file:
-        zip_file.write(temp_file_path, os.path.basename(temp_file_path))
-    zip_buffer.seek(0)
-
-    return send_file(zip_buffer, as_attachment=True, download_name='generated_code.zip', mimetype='application/zip')
+    return send_file(temp_file_path, as_attachment=True, download_name='generated_code.html')
 
 if __name__ == '__main__':
     app.run(debug=True)

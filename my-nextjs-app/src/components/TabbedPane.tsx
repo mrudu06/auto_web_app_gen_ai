@@ -1,30 +1,19 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import CodeMirror from '@uiw/react-codemirror';
 import { html } from '@codemirror/lang-html';
 import styles from '../styles/TabbedPane.module.css';
 
 const TabbedPane: React.FC = () => {
-  const [code, setCode] = useState<string>(`<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Interactive Webpage</title>
-    <style>
-        body { font-family: sans-serif; margin: 0; padding: 0; display: flex; flex-direction: column; min-height: 100vh; }
-        header { background-color: #4CAF50; color: white; padding: 1em 0; text-align: center; width: 100%; }
-        main { flex: 1; padding: 1em; }
-        footer { background-color: #333; color: white; text-align: center; padding: 1em 0; width: 100%; }
-    </style>
-</head>
-<body>
-    <header><h1>My Interactive Website</h1></header>
-    <main><h2>Welcome!</h2><p>Edit the code on the left and see changes here.</p></main>
-    <footer><p>&copy; 2025 My Website</p></footer>
-</body>
-</html>`);
-
+  const [code, setCode] = useState<string>('');
   const [activeTab, setActiveTab] = useState<'code' | 'preview'>('code');
+
+  useEffect(() => {
+    // Fetch the generated code from the server
+    fetch('http://localhost:5000/api/generated-code')
+      .then(response => response.json())
+      .then(data => setCode(data.code))
+      .catch(error => console.error('Error fetching generated code:', error));
+  }, []);
 
   return (
     <div className={styles.tabbedPane}>
@@ -41,23 +30,27 @@ const TabbedPane: React.FC = () => {
         >
           Preview
         </button>
+        <a href="http://localhost:5000/download" className={styles.downloadButton}>
+          <button>Download Code</button>
+        </a>
       </div>
-
       <div className={styles.tabContent}>
         {activeTab === 'code' ? (
-          <CodeMirror
-            value={code}
-            extensions={[html()]}
-            onChange={(value) => setCode(value)}
-          />
+          <div className={styles.codeEditor}>
+            <CodeMirror
+              value={code}
+              extensions={[html()]}
+              onChange={(value) => setCode(value)}
+            />
+          </div>
         ) : (
-          <iframe
-            srcDoc={code}
-            title="Preview"
-            className={styles.iframe}
-            sandbox="allow-scripts allow-modals allow-forms"
-            style={{ width: '100%', height: '100vh', border: 'none' }}
-          />
+          <div className={styles.preview}>
+            <iframe
+              srcDoc={code}
+              title="Preview"
+              className={styles.iframe}
+            />
+          </div>
         )}
       </div>
     </div>

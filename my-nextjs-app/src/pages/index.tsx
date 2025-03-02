@@ -22,19 +22,13 @@ const Home: React.FC = () => {
   return (
     <div className={styles.container}>
       <Head>
-        <title>🚀 VisionCraft: Your AI-Powered Web App Genius! 🔥</title>
+        <title> VisionCraft : AI-Powered Web App Creator</title>
         <meta name="description" content="AI-powered tool to generate and deploy web apps effortlessly." />
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <header className={styles.header} style={{
-        backgroundImage: "url('/background.jpg')",
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        padding: "50px 20px",
-        textAlign: "center"
-      }}>
-        <h1 className={`${styles.title} ${styles.fadeIn}`}>VisionCraft: AI Web App Wizard</h1>
+      <header className={styles.header}>
+        <h1 className={`${styles.title} ${styles.fadeIn}`}>VisionCraft : AI Web App Wizard</h1>
         <p className={`${styles.subtitle} ${styles.fadeIn}`}>{welcomeMessage}</p>
       </header>
 
@@ -57,5 +51,3 @@ const Home: React.FC = () => {
 };
 
 export default Home;
-
-
